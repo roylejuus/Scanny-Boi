@@ -6,21 +6,24 @@
 import sane
 from PIL import Image
 
+#Print Title
+print("scanny boi")
+
 #variables for parameters
 
 depth = 8
-mode = input("Input color or grey:")
+mode = input("Input 'color' or 'gray':")
 source = "Transparency Unit"
 film_type = "Negative Film"
 focus_position ="Focus 2.5mm above glass"
-resolution = input("Input resolution50|60|72|75|80|90|100|120|133|144|150|160|175|180|200|216|240|266|300|320|350|360|400|480|600|720|800|900|1200|1600|1800|2400|3200)")
 #position of upper left corner of first frame
 x = 2 
 y = 16
 
 #Set directory
 prefix = "/home/royle/Pictures/Scans/"
-directory = input("Input the name of the directory in which to store scans (directory must already exist):")
+print("Worknig directory is:", prefix)
+directory = input("Input the name of the directory within the working directory in  which to store scans (directory must already exist):")
 path = prefix + directory
 
 #frame number
@@ -37,6 +40,8 @@ except:
 if s > 4:
     print ("Number must be less than 4")
     quit()
+    
+resolution = input("Input resolution see readme for options:")
 
 # initialize SANE
 ver =sane.init()
@@ -84,20 +89,15 @@ try:
 except:
     print("cannot set position, using default")
 try:
-    dev.resolution = resolution
+    dev.resolution = int(resolution)
 except:
-    print("cannot set resolution, using defalut")
-#try:
-    #dev.br_x = 215.9
-    #dev.br_y = 297.18
-    #dev.br_x = dev.tl_x + 28
-    #dev.br_y = dev.tl_y + 40
-#except:
-   #print("cannot set size, using default")
+    print("cannot set resolution, using defult")
 
 params = dev.get_parameters()
 print('Device parameters:', params)
-#print(dev.optlist)
+
+#print(dev.optlist) #left in for scanner options visibility
+
 #dev.start()
 #scan loops outer loop iterates across film strips, inner loop iterates frames
 i = 1
@@ -109,7 +109,7 @@ while i <= s:
     while j <= 6:
         dev.br_x = dev.tl_x + 28
         dev.br_y = dev.tl_y + 40
-        filename = path +"/" + str(n) + ".tiff"
+        filename = path +"/" + f"{n:04d}" + ".tiff"
 
 #start scan
         dev.start()
@@ -126,7 +126,7 @@ while i <= s:
         x += 37
    # dev.tl_x = x
     i += 1
-
+print("Done!")
 #close device and exit
 dev.close()        
 sane.exit()
