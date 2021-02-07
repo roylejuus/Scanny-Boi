@@ -1,8 +1,8 @@
 #! /usr/bin/python3
 
-#Import functions
+#Import modules
 
-#from__future__ import print_function
+import os
 import sane
 from PIL import Image
 
@@ -21,7 +21,7 @@ x = 2
 y = 16
 
 #Set directory
-prefix = "/home/royle/Pictures/Scans/"
+prefix = os.getenv("HOME") + "/Pictures/Scans/"
 print("Worknig directory is:", prefix)
 directory = input("Input the name of the directory within the working directory in  which to store scans (directory must already exist):")
 path = prefix + directory
