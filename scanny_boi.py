@@ -7,7 +7,7 @@ import sane
 from PIL import Image
 
 #Print Title
-print("scanny boi")
+print("Sanny Boi")
 
 #variables for parameters
 
@@ -20,9 +20,9 @@ focus_position ="Focus 2.5mm above glass"
 x = 2 
 y = 16
 
-#Set directory
+#Set directory edit prefix to set default parent directory
 prefix = os.getenv("HOME") + "/Pictures/Scans/"
-print("Worknig directory is:", prefix)
+print("Working directory is:", prefix)
 directory = input("Input the name of the directory within the working directory in  which to store scans (directory must already exist):")
 path = prefix + directory
 
