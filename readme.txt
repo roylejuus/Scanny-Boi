@@ -21,7 +21,7 @@ pillow
 
 Bit depth is set by default to 8, but may be changed to 16 in the code.
 Scans are saved by default in HOME/Pictures/Scans with a prompt to name a directory within the default directory, the user input directory must already exist because I am lazy.
-The default directory is easily within the code 
+The default directory is easily changed within the code 
 
 Resolution options: 
 50|60|72|75|80|90|100|120|133|144|150|160|175|180|200|216|240|266|
