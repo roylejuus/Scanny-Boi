@@ -18,7 +18,7 @@ film_type = "Negative Film"
 focus_position ="Focus 2.5mm above glass"
 #position of upper left corner of first frame
 x = 2 
-y = 16
+ystart = 26
 
 #Set directory edit prefix to set default parent directory
 prefix = os.getenv("HOME") + "/Pictures/Scans/"
@@ -26,19 +26,68 @@ print("Working directory is:", prefix)
 directory = input("Input the name of the directory within the working directory in  which to store scans (directory must already exist):")
 path = prefix + directory
 
+#xdim = int
+#ydim = int
+#xinc = int
+#xinc2 = int
+#yinc = int
+#smax = int
+#frames = int
+
+#Set Format
+format = input("Input film format(35,645,66,67,69(nice))")
+format = (int(format))
+if format == 35:
+    ystart  = 16
+    xdim = 28
+    ydim = 40
+    xinc = 37
+    xinc2 = 43.5
+    yinc = 38
+    smax = 4
+    frames = 6
+elif format == 645:
+    xdim = 65
+    ydim = 50
+    xinc = 82
+    yinc = 50
+    smax = 2
+    frames = 4
+elif format == 66:
+    xdim = 65
+    ydim = 65
+    xinc = 82
+    yinc = 65
+    smax = 2
+    frames = 3
+elif format == 67:
+    xdim = 65
+    ydim = 75
+    xinc = 82
+    yinc = 75
+    smax = 2
+    frames = 2
+elif format == 69:
+    xdim = 65
+    ydim = 75
+    xinc = 82
+    yinc = 95
+    smax = 2
+    frames = 1
+print (xdim,ydim,xinc,yinc,smax,frames)
 #frame number
 num = input("Input starting number:")
 n = int(num)
 
 #number of strips
-strips = input("Input number of strips(1:4):")
+strips = input("Input number of strips:")
 try:
     s = int(strips)
 except:
     print("Enter a number")
     quit()
-if s > 4:
-    print ("Number must be less than 4")
+if s > smax:
+    print ("Too many strips")
     quit()
     
 resolution = input("Input resolution see readme for options:")
@@ -85,7 +134,7 @@ except:
 
 try:
     dev.tl_x = x
-    dev.tl_y = y
+    dev.tl_y = ystart
 except:
     print("cannot set position, using default")
 try:
@@ -103,12 +152,12 @@ print('Device parameters:', params)
 i = 1
 while i <= s:
     j = 1
-    y = 16
+    y = int(ystart)
     dev.tl_x = x
     dev.tl_y = y
-    while j <= 6:
-        dev.br_x = dev.tl_x + 28
-        dev.br_y = dev.tl_y + 40
+    while j <= frames:
+        dev.br_x = dev.tl_x + xdim
+        dev.br_y = dev.tl_y + ydim
         filename = path +"/" + f"{n:04d}" + ".tiff"
 
 #start scan
@@ -116,14 +165,14 @@ while i <= s:
         im = dev.snap()
         im.save(filename)
         print(filename, "captured")
-        y += 38
+        y += yinc
         dev.tl_y = y
         n += 1
         j += 1
     if i % 2 == 0:
-        x += 43.5
+        x += xinc2
     else:
-        x += 37
+        x += xinc
    # dev.tl_x = x
     i += 1
 print("Done!")

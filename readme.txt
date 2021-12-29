@@ -3,7 +3,7 @@ Licensed under the MIT license
 
 Description:
 Scanny Boi is a simple film scanning automation program.
-It currently natively supports 35mm film (medium support to be added eventually) on the Epson Perfection V700
+It currently natively supports 35mm and 120 film on the Epson Perfection V700
 and likely its successors using the stock film holder, other Epson scanners or aftermarket film holders likely
 require changing the position of the upper left corner in the code.
 
