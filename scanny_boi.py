@@ -5,38 +5,51 @@
 import os
 import sane
 from PIL import Image
+import argparse
 
 #Print Title
 print("Sanny Boi")
 
+#argparse args
+parser = argparse.ArgumentParser()
+parser.add_argument("-v", "--verbose", action = "store_true", help = "Verbose Output")
+parser.add_argument("-m", "--mode", type = int, help = "1: B/W 2: Color")
+parser.add_argument("-d", "--directory", type = str, help = "directory -must already exist")
+parser.add_argument("-f", "--format", type = int, help = "Film Format; 35mm: 35, 6x4.5: 645, 6x6: 66, 6x7: 67, 6x9: 69")
+parser.add_argument("-n", "--number", type = int, help ="Starting File Number")
+parser.add_argument("-s", "--strips", type = int, help ="Number of strips")
+parser.add_argument("-r", "--resolution", type = int, help ="Resolution: 50|60|72|75|80|90|100|120|133|144|150|160|175|180|200|216|240|266|300|320|350|360|400|480|600|720|800|900|1200|1600|1800|2400|3200 dpi")
+
+args = parser.parse_args()
+
 #variables for parameters
 
 depth = 8
-mode = input("Input 'color' or 'gray':")
+
+if args.mode == 2:
+    mode = "color"
+elif args.mode == 1:
+    mode = "gray"
+else:
+    mode = "gray"
 source = "Transparency Unit"
 film_type = "Negative Film"
 focus_position ="Focus 2.5mm above glass"
+
 #position of upper left corner of first frame
 x = 2 
 ystart = 26
 
-#Set directory edit prefix to set default parent directory
-prefix = os.getenv("HOME") + "/Pictures/Scans/"
-print("Working directory is:", prefix)
-directory = input("Input the name of the directory within the working directory in  which to store scans (directory must already exist):")
-path = prefix + directory
+path = os.getenv("HOME") +"/" + args.directory
 
-#xdim = int
-#ydim = int
-#xinc = int
-#xinc2 = int
-#yinc = int
-#smax = int
-#frames = int
 
 #Set Format
-format = input("Input film format(35,645,66,67,69(nice))")
-format = (int(format))
+
+if args.format:
+    format = args.format
+else:
+    format = 35
+    
 if format == 35:
     ystart  = 16
     xdim = 28
@@ -74,36 +87,44 @@ elif format == 69:
     yinc = 95
     smax = 2
     frames = 1
-print (xdim,ydim,xinc,yinc,smax,frames)
+if args.verbose:
+    print (xdim,ydim,xinc,yinc,smax,frames)
 #frame number
-num = input("Input starting number:")
-n = int(num)
 
+if args.number:
+    n = args.number
+else:
+    n = 1
 #number of strips
-strips = input("Input number of strips:")
-try:
-    s = int(strips)
-except:
-    print("Enter a number")
-    quit()
-if s > smax:
-    print ("Too many strips")
-    quit()
-    
-resolution = input("Input resolution see readme for options:")
 
+if args.strips <= smax:
+    s = args.strips
+elif args.strips > smax:
+    print ("Too many strips, defaulting to max")
+    s = smax
+else:
+    s = smax
+    
+# resolution
+if args.resolution:
+    resolution = args.resolution
+else:
+    resolution = 1600
+    
 # initialize SANE
 ver =sane.init()
-print("SANE version:", ver)
+if args.verbose:
+    print("SANE version:", ver)
 
 #Get Devices
 devices = sane.get_devices()
-print("Available devices:", devices)
+if args.verbose:
+    print("Available devices:", devices)
 
 #Open first device
 dev = sane.open(devices[0][0])
-
-print(dev)
+if args.verbose:
+    print(dev)
 
 #set options
 
@@ -143,11 +164,12 @@ except:
     print("cannot set resolution, using defult")
 
 params = dev.get_parameters()
-print('Device parameters:', params)
+if args.verbose:
+    print('Device parameters:', params)
 
 #print(dev.optlist) #left in for scanner options visibility
 
-#dev.start()
+
 #scan loops outer loop iterates across film strips, inner loop iterates frames
 i = 1
 while i <= s:
@@ -164,7 +186,8 @@ while i <= s:
         dev.start()
         im = dev.snap()
         im.save(filename)
-        print(filename, "captured")
+        if args.verbose:
+            print(filename, "captured")
         y += yinc
         dev.tl_y = y
         n += 1
@@ -175,7 +198,9 @@ while i <= s:
         x += xinc
    # dev.tl_x = x
     i += 1
-print("Done!")
+if args.verbose:
+    print("Done!")
+    
 #close device and exit
 dev.close()        
 sane.exit()
